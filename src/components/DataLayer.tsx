@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface PollenData {
   city: string;
   pollenLevel: number;
@@ -28,6 +30,8 @@ interface DataLayerProps {
 }
 
 export default function DataLayer({ data, loading, onSecretTap, debugLevel }: DataLayerProps) {
+  const [showInfo, setShowInfo] = useState(false);
+
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
@@ -68,7 +72,7 @@ export default function DataLayer({ data, loading, onSecretTap, debugLevel }: Da
           {displayCount}
         </div>
         <div
-          className="text-xs sm:text-sm mt-0.5"
+          className="text-xs sm:text-sm mt-0.5 flex items-center gap-1.5"
           style={{
             color: "var(--pollen-yellow-light)",
             fontFamily: "'Source Serif 4', serif",
@@ -77,7 +81,37 @@ export default function DataLayer({ data, loading, onSecretTap, debugLevel }: Da
           }}
         >
           grains/m³
+          <span
+            onClick={() => setShowInfo((v) => !v)}
+            style={{
+              pointerEvents: "auto",
+              cursor: "pointer",
+              fontSize: "11px",
+              opacity: 0.6,
+              fontStyle: "normal",
+            }}
+          >
+            ⓘ
+          </span>
         </div>
+        {showInfo && (
+          <div
+            onClick={() => setShowInfo(false)}
+            className="mt-1.5 px-3 py-2 rounded-xl"
+            style={{
+              pointerEvents: "auto",
+              background: "rgba(60, 50, 30, 0.85)",
+              color: "rgba(255, 230, 150, 0.9)",
+              fontFamily: "'Noto Serif JP', serif",
+              fontSize: "11px",
+              lineHeight: 1.6,
+              maxWidth: "200px",
+              cursor: "pointer",
+            }}
+          >
+            気温・風速・季節をもとに算出した推定値です
+          </div>
+        )}
 
         <div
           className="mt-3 text-xl sm:text-2xl"

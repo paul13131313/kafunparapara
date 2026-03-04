@@ -23,51 +23,46 @@ function getPollenLevel(count: number): { level: number; label: string } {
   return { level: 5, label: "鬼ヤバ💀" };
 }
 
-function findClosestHourIndex(times: string[]): number {
-  const now = new Date();
-  let closestIndex = 0;
-  let closestDiff = Infinity;
+const MONTH_BASE: Record<number, number> = {
+  1: 5,
+  2: 30,
+  3: 120,
+  4: 80,
+  5: 20,
+};
 
-  for (let i = 0; i < times.length; i++) {
-    const diff = Math.abs(new Date(times[i]).getTime() - now.getTime());
-    if (diff < closestDiff) {
-      closestDiff = diff;
-      closestIndex = i;
-    }
-  }
-  return closestIndex;
+function estimatePollenCount(temperature: number, windSpeed: number, weatherCode: number): number {
+  const month = new Date().getMonth() + 1;
+  let score = MONTH_BASE[month] ?? 5;
+
+  if (temperature >= 15) score *= 1.5;
+  if (windSpeed >= 5) score *= 1.3;
+  if (weatherCode <= 2) score *= 1.2;
+  if (weatherCode >= 61) score *= 0.3;
+
+  return Math.round(score);
 }
 
 export async function GET() {
   try {
-    const pollenUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${TOKYO_LAT}&longitude=${TOKYO_LON}&hourly=alder_pollen,birch_pollen,grass_pollen&timezone=Asia%2FTokyo`;
-
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${TOKYO_LAT}&longitude=${TOKYO_LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=Asia%2FTokyo`;
 
-    const [pollenRes, weatherRes] = await Promise.all([
-      fetch(pollenUrl, { next: { revalidate: 3600 } }),
-      fetch(weatherUrl, { next: { revalidate: 3600 } }),
-    ]);
+    const weatherRes = await fetch(weatherUrl, { next: { revalidate: 3600 } });
 
-    if (!pollenRes.ok) {
-      throw new Error(`Open-Meteo Air Quality API error: ${pollenRes.status}`);
-    }
     if (!weatherRes.ok) {
       throw new Error(`Open-Meteo Weather API error: ${weatherRes.status}`);
     }
 
-    const pollenData = await pollenRes.json();
     const weatherData = await weatherRes.json();
+    const current = weatherData.current;
 
-    const hourIndex = findClosestHourIndex(pollenData.hourly.time);
+    const temperature = current.temperature_2m ?? 0;
+    const windSpeed = current.wind_speed_10m ?? 0;
+    const weatherCode = current.weather_code ?? 0;
 
-    const alderPollen = pollenData.hourly.alder_pollen?.[hourIndex] ?? 0;
-    const birchPollen = pollenData.hourly.birch_pollen?.[hourIndex] ?? 0;
-    const pollenCount = Math.round(alderPollen + birchPollen);
-
+    const pollenCount = estimatePollenCount(temperature, windSpeed, weatherCode);
     const { level, label } = getPollenLevel(pollenCount);
 
-    const current = weatherData.current;
     const weatherCodeMap: Record<number, string> = {
       0: "快晴",
       1: "晴れ",
@@ -100,10 +95,10 @@ export async function GET() {
       pollenLevel: level,
       pollenCount: pollenCount,
       pollenLabel: label,
-      temperature: Math.round(current.temperature_2m ?? 0),
+      temperature: Math.round(temperature),
       humidity: Math.round(current.relative_humidity_2m ?? 0),
-      windSpeed: Math.round((current.wind_speed_10m ?? 0) * 10) / 10,
-      weather: weatherCodeMap[current.weather_code] ?? "不明",
+      windSpeed: Math.round(windSpeed * 10) / 10,
+      weather: weatherCodeMap[weatherCode] ?? "不明",
       updatedAt: new Date().toISOString(),
     };
 
