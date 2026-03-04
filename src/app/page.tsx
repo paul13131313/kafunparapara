@@ -23,6 +23,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [started, setStarted] = useState(false);
+  const [debugLevel, setDebugLevel] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -44,7 +45,15 @@ export default function Home() {
     fetchPollen();
   }, []);
 
-  const pollenLevel = data?.pollenLevel ?? 1;
+  const pollenLevel = debugLevel ?? data?.pollenLevel ?? 1;
+
+  function handleSecretTap() {
+    setDebugLevel((prev) => {
+      if (prev === null) return 1;
+      if (prev >= 5) return null;
+      return prev + 1;
+    });
+  }
 
   function handleStart() {
     setStarted(true);
@@ -168,7 +177,7 @@ export default function Home() {
         <PollenParticles pollenLevel={pollenLevel} />
 
         {/* データレイヤー */}
-        <DataLayer data={data} loading={loading} />
+        <DataLayer data={data} loading={loading} onSecretTap={handleSecretTap} />
       </div>
     </main>
   );

@@ -15,9 +15,10 @@ interface PollenData {
 interface DataLayerProps {
   data: PollenData | null;
   loading: boolean;
+  onSecretTap?: () => void;
 }
 
-export default function DataLayer({ data, loading }: DataLayerProps) {
+export default function DataLayer({ data, loading, onSecretTap }: DataLayerProps) {
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
@@ -89,9 +90,10 @@ export default function DataLayer({ data, loading }: DataLayerProps) {
       </div>
 
       {/* 右下: 気象情報 */}
-      <div className="absolute bottom-8 right-5 sm:right-8 text-right">
+      <div className="absolute bottom-8 right-5 sm:right-8 text-right" style={{ pointerEvents: "auto" }}>
         <div
           className="px-3.5 py-2.5 rounded-2xl"
+          onClick={onSecretTap}
           style={{
             background: "var(--panel-bg)",
             fontFamily: "'Source Serif 4', serif",
