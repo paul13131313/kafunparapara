@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, RefObject } from "react";
 
 interface CharacterPlayerProps {
   pollenLevel: number;
+  videoRef?: RefObject<HTMLVideoElement | null>;
+  autoPlay?: boolean;
 }
 
-export default function CharacterPlayer({ pollenLevel }: CharacterPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+export default function CharacterPlayer({ pollenLevel, videoRef: externalRef, autoPlay = true }: CharacterPlayerProps) {
+  const internalRef = useRef<HTMLVideoElement>(null);
+  const ref = externalRef ?? internalRef;
   const [currentLevel, setCurrentLevel] = useState(pollenLevel);
 
   useEffect(() => {
@@ -17,16 +20,18 @@ export default function CharacterPlayer({ pollenLevel }: CharacterPlayerProps) {
   }, [pollenLevel, currentLevel]);
 
   useEffect(() => {
-    const video = videoRef.current;
+    const video = ref.current;
     if (!video) return;
 
     const src = `/assets/character/state-${currentLevel}.mp4`;
     if (video.src !== window.location.origin + src) {
       video.src = src;
       video.load();
-      video.play().catch(() => {});
+      if (autoPlay) {
+        video.play().catch(() => {});
+      }
     }
-  }, [currentLevel]);
+  }, [currentLevel, autoPlay, ref]);
 
   return (
     <div className="relative flex items-center justify-center w-full" style={{ height: "65vh" }}>
@@ -42,8 +47,7 @@ export default function CharacterPlayer({ pollenLevel }: CharacterPlayerProps) {
         }}
       >
         <video
-          ref={videoRef}
-          autoPlay
+          ref={ref}
           loop
           muted
           playsInline
