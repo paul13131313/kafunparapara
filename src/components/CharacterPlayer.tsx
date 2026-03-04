@@ -28,7 +28,12 @@ export default function CharacterPlayer({ pollenLevel, videoRef: externalRef, au
       video.src = src;
       video.load();
       if (autoPlay) {
-        video.play().catch(() => {});
+        const onCanPlay = () => {
+          video.play().catch(() => {});
+          video.removeEventListener("canplay", onCanPlay);
+        };
+        video.addEventListener("canplay", onCanPlay);
+        return () => video.removeEventListener("canplay", onCanPlay);
       }
     }
   }, [currentLevel, autoPlay, ref]);

@@ -177,7 +177,7 @@ export default function Home() {
         <PollenParticles pollenLevel={pollenLevel} />
 
         {/* データレイヤー */}
-        <DataLayer data={data} loading={loading} onSecretTap={handleSecretTap} />
+        <DataLayer data={data} loading={loading} onSecretTap={handleSecretTap} debugLevel={debugLevel} />
       </div>
     </main>
   );

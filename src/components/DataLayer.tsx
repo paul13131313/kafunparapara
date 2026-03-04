@@ -12,13 +12,22 @@ interface PollenData {
   updatedAt: string;
 }
 
+const DEBUG_LABELS: Record<number, { level: number; label: string; count: number }> = {
+  1: { level: 1, label: "だいぶマシ", count: 10 },
+  2: { level: 2, label: "ふつう", count: 65 },
+  3: { level: 3, label: "まあヤバい", count: 180 },
+  4: { level: 4, label: "激ヤバ", count: 450 },
+  5: { level: 5, label: "鬼ヤバ💀", count: 820 },
+};
+
 interface DataLayerProps {
   data: PollenData | null;
   loading: boolean;
   onSecretTap?: () => void;
+  debugLevel?: number | null;
 }
 
-export default function DataLayer({ data, loading, onSecretTap }: DataLayerProps) {
+export default function DataLayer({ data, loading, onSecretTap, debugLevel }: DataLayerProps) {
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
@@ -38,6 +47,11 @@ export default function DataLayer({ data, loading, onSecretTap }: DataLayerProps
 
   if (!data) return null;
 
+  const debug = debugLevel != null ? DEBUG_LABELS[debugLevel] : null;
+  const displayCount = debug?.count ?? data.pollenCount;
+  const displayLabel = debug?.label ?? data.pollenLabel;
+  const displayLevel = debug?.level ?? data.pollenLevel;
+
   return (
     <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 20 }}>
       {/* 左上: メイン数値 */}
@@ -51,7 +65,7 @@ export default function DataLayer({ data, loading, onSecretTap }: DataLayerProps
             letterSpacing: "-0.02em",
           }}
         >
-          {data.pollenCount}
+          {displayCount}
         </div>
         <div
           className="text-xs sm:text-sm mt-0.5"
@@ -73,7 +87,7 @@ export default function DataLayer({ data, loading, onSecretTap }: DataLayerProps
             fontWeight: 600,
           }}
         >
-          {data.pollenLabel}
+          {displayLabel}
         </div>
 
         <div
@@ -85,7 +99,7 @@ export default function DataLayer({ data, loading, onSecretTap }: DataLayerProps
             fontWeight: 600,
           }}
         >
-          Lv.{data.pollenLevel}
+          Lv.{displayLevel}
         </div>
       </div>
 
