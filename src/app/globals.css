@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #FFF4ED;
+  --pollen-yellow: #C8A000;
+  --pollen-yellow-light: #D4B010;
+  --pollen-yellow-soft: rgba(200, 160, 0, 0.1);
+  --text-primary: #3a3020;
+  --text-secondary: rgba(58, 48, 32, 0.4);
+  --panel-bg: rgba(196, 154, 0, 0.06);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: "Source Serif 4", "Noto Serif JP", Georgia, serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(196, 154, 0, 0.25);
+  color: var(--text-primary);
+}
