@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 
 interface PollenData {
   city: string;
@@ -30,8 +29,6 @@ interface DataLayerProps {
 }
 
 export default function DataLayer({ data, loading, onSecretTap, debugLevel }: DataLayerProps) {
-  const [showInfo, setShowInfo] = useState(false);
-
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
@@ -52,69 +49,24 @@ export default function DataLayer({ data, loading, onSecretTap, debugLevel }: Da
   if (!data) return null;
 
   const debug = debugLevel != null ? DEBUG_LABELS[debugLevel] : null;
-  const displayCount = debug?.count ?? data.pollenCount;
   const displayLabel = debug?.label ?? data.pollenLabel;
-  const displayLevel = debug?.level ?? data.pollenLevel;
 
   return (
     <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 20 }}>
-      {/* 左上: メイン数値 */}
+      {/* 左上: 花粉レベル */}
       <div className="absolute top-20 left-5 sm:left-8">
         <div
-          className="text-6xl sm:text-8xl tabular-nums"
-          style={{
-            color: "var(--pollen-yellow)",
-            fontFamily: "'Crimson Pro', serif",
-            fontWeight: 600,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          {displayCount}
-        </div>
-        <div
-          className="text-xs sm:text-sm mt-0.5 flex items-center gap-1.5"
+          className="text-xs sm:text-sm"
           style={{
             color: "var(--pollen-yellow-light)",
-            fontFamily: "'Source Serif 4', serif",
-            fontStyle: "italic",
+            fontFamily: "'Noto Serif JP', serif",
             opacity: 0.9,
           }}
         >
-          grains/m³
-          <span
-            onClick={() => setShowInfo((v) => !v)}
-            style={{
-              pointerEvents: "auto",
-              cursor: "pointer",
-              fontSize: "11px",
-              opacity: 0.6,
-              fontStyle: "normal",
-            }}
-          >
-            ⓘ
-          </span>
+          花粉レベル
         </div>
-        {showInfo && (
-          <div
-            onClick={() => setShowInfo(false)}
-            className="mt-1.5 px-3 py-2 rounded-xl"
-            style={{
-              pointerEvents: "auto",
-              background: "rgba(60, 50, 30, 0.85)",
-              color: "rgba(255, 230, 150, 0.9)",
-              fontFamily: "'Noto Serif JP', serif",
-              fontSize: "11px",
-              lineHeight: 1.6,
-              maxWidth: "200px",
-              cursor: "pointer",
-            }}
-          >
-            気温・風速・季節をもとに算出した推定値です
-          </div>
-        )}
-
         <div
-          className="mt-3 text-xl sm:text-2xl"
+          className="mt-1 text-4xl sm:text-6xl"
           style={{
             color: "var(--pollen-yellow)",
             fontFamily: "'Crimson Pro', serif",
@@ -122,18 +74,6 @@ export default function DataLayer({ data, loading, onSecretTap, debugLevel }: Da
           }}
         >
           {displayLabel}
-        </div>
-
-        <div
-          className="mt-2 text-xs px-2.5 py-1 rounded-full inline-block"
-          style={{
-            background: "var(--pollen-yellow-soft)",
-            color: "var(--pollen-yellow)",
-            fontFamily: "'Source Serif 4', serif",
-            fontWeight: 600,
-          }}
-        >
-          Lv.{displayLevel}
         </div>
       </div>
 
