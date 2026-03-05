@@ -16,11 +16,11 @@ const TOKYO_LAT = 35.68;
 const TOKYO_LON = 139.69;
 
 function getPollenLevel(count: number): { level: number; label: string } {
-  if (count < 30) return { level: 1, label: "だいぶマシ" };
-  if (count < 100) return { level: 2, label: "ふつう" };
-  if (count < 300) return { level: 3, label: "まあヤバい" };
-  if (count < 600) return { level: 4, label: "激ヤバ" };
-  return { level: 5, label: "鬼ヤバ💀" };
+  if (count < 30) return { level: 1, label: "ﾀﾞぃぶﾏｼ" };
+  if (count < 100) return { level: 2, label: "ふつぅ" };
+  if (count < 300) return { level: 3, label: "まぁャバぃ" };
+  if (count < 600) return { level: 4, label: "激ャバ" };
+  return { level: 5, label: "鬼ャバ💀" };
 }
 
 const MONTH_BASE: Record<number, number> = {

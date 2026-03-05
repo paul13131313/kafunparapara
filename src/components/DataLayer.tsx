@@ -14,11 +14,11 @@ interface PollenData {
 }
 
 const DEBUG_LABELS: Record<number, { level: number; label: string; count: number }> = {
-  1: { level: 1, label: "だいぶマシ", count: 10 },
-  2: { level: 2, label: "ふつう", count: 65 },
-  3: { level: 3, label: "まあヤバい", count: 180 },
-  4: { level: 4, label: "激ヤバ", count: 450 },
-  5: { level: 5, label: "鬼ヤバ💀", count: 820 },
+  1: { level: 1, label: "ﾀﾞぃぶﾏｼ", count: 10 },
+  2: { level: 2, label: "ふつぅ", count: 65 },
+  3: { level: 3, label: "まぁャバぃ", count: 180 },
+  4: { level: 4, label: "激ャバ", count: 450 },
+  5: { level: 5, label: "鬼ャバ💀", count: 820 },
 };
 
 interface DataLayerProps {
@@ -69,8 +69,8 @@ export default function DataLayer({ data, loading, onSecretTap, debugLevel }: Da
           className="mt-1 text-4xl sm:text-6xl"
           style={{
             color: "var(--pollen-yellow)",
-            fontFamily: "'Crimson Pro', serif",
-            fontWeight: 600,
+            fontFamily: "'DotGothic16', sans-serif",
+            fontWeight: 400,
           }}
         >
           {displayLabel}
